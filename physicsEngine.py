@@ -8,18 +8,18 @@ class Rectangle:
         self.velocity_y =  velocity_y
         self.force_x = force_x
         self.force_y = force_y
-        self.acceleration_x = acceleration_x
-        self.acceleration_y = acceleration_y
         self.mass = mass
         self.density = density
         self.color  = color
+        self.acceleration_x = acceleration_x
+        self.acceleration_y = acceleration_y
 
 class Ellipse:
     def __init__(self, x, y, radius_x, radius_y, mass=0, density=0, velocity_x=0, velocity_y=0, force_x=0, force_y=0, color=(0, 0, 0), acceleration_x=0, acceleration_y=0):
         self.x = x
         self.y = y
-        self.radius_x = radius_x
-        self.radius_y = radius_y
+        self.width = radius_x
+        self.height = radius_y
         self.velocity_x =  velocity_x
         self.velocity_y =  velocity_y
         self.force_x = force_x
@@ -29,7 +29,7 @@ class Ellipse:
         self.color  = color
         self.acceleration_x = acceleration_x
         self.acceleration_y = acceleration_y
-        # self.color  = color
+        
 
 def apply_force(object, force_x, force_y):
     object.acceleration_x += force_x / object.mass
@@ -57,7 +57,8 @@ def apply_gravity(object, gravity):
     object.acceleration -= gravity
 
 def apply_friction(object, friction):
-    object.acceleration -= object.velocity * friction
+    object.acceleration_x += -object.acceleration_x * (friction)
+    # object.velocity_y -= object.velocity_y * friction
 
 def simulate_rigid_body(object):
     object.velocity_x += object.acceleration_x

@@ -89,8 +89,8 @@ def pygameStart():
             simulate_rigid_body(obj)
 
             # Stop the object when it hits the platform
-            if obj.y + obj.height > platform.y:
-                obj.y = platform.y - obj.height 
+            if obj.y + obj.radius_y > platform.y:
+                obj.y = platform.y - obj.radius_y 
                 obj.velocity_y = 0
 
         # Event loop
@@ -109,7 +109,7 @@ def pygameStart():
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w] and selected_obj:
             # apply_force(selected_obj, 0, -GRAVITY+10)
-            apply_acceleration(selected_obj, 0, -GRAVITY)
+            # apply_acceleration(selected_obj, 0, -GRAVITY)
             simulate_rigid_body(selected_obj)
             # selected_obj.y -= 10  # Move up
         if keys[pygame.K_a] and selected_obj:

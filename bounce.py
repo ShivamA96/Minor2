@@ -1,5 +1,5 @@
 import pygame
-from physicsEngine import Rectangle,Ellipse, apply_force, simulate_rigid_body,apply_acceleration
+from physicsEngine import Rectangle,Ellipse, apply_force, simulate_rigid_body,apply_acceleration, apply_friction
 from pygame import gfxdraw
 # Initialize Pygame
 pygame.init()
@@ -7,6 +7,7 @@ pygame.init()
 # Set up some constants
 WIDTH, HEIGHT = 800, 600
 GRAVITY = 0.98
+COR = 0.5
 
 import random
 # Create a Pygame window
@@ -56,12 +57,12 @@ def create_object(ObjectType = "R", x=0, y=0, radius_x=0, radius_y=0, color="RED
 
     return Object
 
+
+
 def pygameStart():
     selected_obj = None  # No object is selected initially
 
     objects = [create_object("E")]
-
-    print(objects)
 
     running = True
     while running:
@@ -71,27 +72,34 @@ def pygameStart():
         # Draw the platform
         pygame.draw.rect(screen, (0, 255, 0), (platform.x, platform.y, platform.width, platform.height))
         
-        print(objects[0].__class__.__name__)
+        # print(objects[0].__class__.__name__)
         for i in objects:
             
                 # print(i.color)
             if i.__class__.__name__ == "Rectangle":
                 pygame.draw.rect(screen, i.color, (i.x, i.y, i.width, i.height))
             elif i.__class__.__name__ == "Ellipse":
-                rect = pygame.Rect(i.x, i.y, i.radius_x, i.radius_y)
+                rect = pygame.Rect(i.x, i.y, i.width, i.height)
                 pygame.draw.ellipse(screen, i.color, rect)
 
         for obj in objects:
             # Apply gravity to the object
             apply_acceleration(obj, 0, GRAVITY)
 
+            if obj.y + obj.height > platform.y:
+
+                apply_friction(obj, 1)
+
             # Simulate the object's motion
             simulate_rigid_body(obj)
 
-            # Stop the object when it hits the platform
+
+            # BOUNCE
             if obj.y + obj.height > platform.y:
                 obj.y = platform.y - obj.height 
-                obj.velocity_y = 0
+                obj.velocity_y *= -COR
+        
+
 
         # Event loop
         for event in pygame.event.get():
@@ -109,15 +117,14 @@ def pygameStart():
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w] and selected_obj:
             # apply_force(selected_obj, 0, -GRAVITY+10)
-            apply_acceleration(selected_obj, 0, -GRAVITY)
-            simulate_rigid_body(selected_obj)
+            selected_obj.velocity_y += 1
             # selected_obj.y -= 10  # Move up
         if keys[pygame.K_a] and selected_obj:
-            selected_obj.x -= 5  # Move left
+            selected_obj.velocity_x += 1
         if keys[pygame.K_s] and selected_obj:
-            selected_obj.y += 5  # Move down
+            selected_obj.velocity_y -= 1
         if keys[pygame.K_d] and selected_obj:
-            selected_obj.x += 5  # Move right
+            selected_obj.velocity_x += 1
 
         # Update the display
         pygame.display.flip()
