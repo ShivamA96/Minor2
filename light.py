@@ -1,0 +1,1 @@
+LIGHT_SOURCE = (400, 300)
