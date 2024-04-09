@@ -231,6 +231,17 @@ def handle_collision(objects: list):
         apply_force(objects[b-1], objects[b-1].force_x, -objects[b-1].force_y)
         simulate_rigid_body(objects[b-1])
 
+def projectile_motion(object, initial_velocity, angle):
+    # Convert angle to radians
+    angle_rad = math.radians(angle)
 
+    # Calculate velocities
+    object.velocity_x = initial_velocity * math.cos(angle_rad)
+    object.velocity_y = initial_velocity * math.sin(angle_rad) - (9.8 * 0.01)  # Gravity effect (9.8 m/s^2)
 
-    
+    # Update object position
+    object.x += object.velocity_x
+    object.y += object.velocity_y
+
+    # Simulate rigid body motion
+    simulate_rigid_body(object)

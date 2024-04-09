@@ -61,17 +61,7 @@ def force_by_player(object, force_x, force_y):
 
 
     simulate_rigid_body_by_player(object)
-def force_by_player(object, force_x, force_y):
 
-    object.force_x += force_x
-    object.force_y += force_y
-    
-    object.acceleration_x += object.force_x  / object.mass
-    object.acceleration_y += object.force_y / object.mass
-
-
-
-    simulate_rigid_body_by_player(object)
 
 
 
@@ -167,9 +157,9 @@ def create_object(ObjectType,id, x=0, y=0, radius_x=0, radius_y=0, color="RED"):
     return Object
 
 
-def apply_force_on_object_by_player(object, force_x, force_y):
 
-    force_by_player(object, force_x, force_y)
+
+   
 
 COLORS = {
     "RED": {"rgb": (255, 0, 0), "density": 0.01},

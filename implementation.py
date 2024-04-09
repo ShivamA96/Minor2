@@ -1,6 +1,6 @@
-import pygame
 from physicsEngineV2 import Rectangle,Ellipse,simulate_rigid_body_for_screen, simulate_rigid_body,apply_acceleration, apply_friction, apply_force, force_by_player, create_object,handle_collision
 from physicsEngineV2 import COLORS as COLORS
+import pygame
 
 WIDTH, HEIGHT = 800, 600
 GRAVITY = 0.98

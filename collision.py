@@ -1,5 +1,5 @@
 import pygame
-from physicsEngine import Rectangle,Ellipse, simulate_rigid_body,apply_acceleration, apply_friction, apply_force, force_by_player, create_object,handle_collision
+from physicsEngine import Rectangle,Ellipse, simulate_rigid_body,apply_acceleration, apply_friction, apply_force, force_by_player, create_object,handle_collision,projectile_motion
 from physicsEngine import COLORS as COLORS
 import random
 WIDTH, HEIGHT = 800, 600
@@ -147,6 +147,10 @@ def pygameStart():
         # Get the state of the keys
         keys = pygame.key.get_pressed()
         #TODO? : WHY IS DDD AND A COMBINATION NOT WORKING as expected!?
+
+        if keys[pygame.K_UP] and selected_obj:
+            projectile_motion(selected_obj,2,45.0)
+
         if keys[pygame.K_w] and selected_obj:
 
             selected_obj.w_counter += 0.5
