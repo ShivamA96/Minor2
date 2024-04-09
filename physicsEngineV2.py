@@ -1,7 +1,6 @@
 import math
 import random
 
-
 WIDTH, HEIGHT = 800, 600
 class Rectangle:
     def __init__(self,x, y, width, height, id= 0, density=0, velocity_x=0, velocity_y=0, force_x=0.0, force_y=0.0, color=(0, 0, 0), acceleration_x=0, acceleration_y=0):
@@ -59,52 +58,56 @@ def force_by_player(object, force_x, force_y):
     object.acceleration_x += object.force_x  / object.mass
     object.acceleration_y += object.force_y / object.mass
 
-    # object.force_x = 0
-    # object.force_y = 0
 
 
     simulate_rigid_body_by_player(object)
-    
+def force_by_player(object, force_x, force_y):
 
-# def collision_detection(object1, object2):
-#     if isinstance(object1, Rectangle) and isinstance(object2, Rectangle):
-#         return (abs(object1.x - object2.x) * 2 < (object1.width + object2.width)) and (abs(object1.y - object2.y) * 2 < (object1.height + object2.height))
-#     elif isinstance(object1, Ellipse) and isinstance(object2, Ellipse):
-#         dist_sq = (object1.x - object2.x) ** 2 / (object1.radius_x + object2.radius_x) ** 2 + (object1.y - object2.y) ** 2 / (object1.radius_y + object2.radius_y) ** 2
-#         return dist_sq <= 1
-#     else:
-#         return False
+    object.force_x += force_x
+    object.force_y += force_y
+    
+    object.acceleration_x += object.force_x  / object.mass
+    object.acceleration_y += object.force_y / object.mass
+
+
+
+    simulate_rigid_body_by_player(object)
+
+
 
 def apply_acceleration(object, acceleration_x, acceleration_y):
     object.acceleration_x = acceleration_x
     object.acceleration_y = acceleration_y
     simulate_rigid_body_for_screen(object)
-# def collision_response(object1, object2):
-#     if collision_detection(object1, object2):
-#         # Swap velocities
-#         object1.velocity, object2.velocity = object2.velocity, object1.velocity
-
-# def apply_gravity(object, gravity):
-#     object.acceleration -= gravity
 
 def apply_friction(object, friction):
-    # object.acceleration_x = (friction * object.mass * 10)  / object.mass
-    # object.acceleration_x -= object.acceleration_x * (friction)
-    # apply_force(object, -(friction * object.mass * 10) , 0) 
-    if object.velocity_x > 0:
-        object.force_x -= (friction * object.mass * 10)
-    elif object.velocity_x < 0:
-        object.force_x += (friction * object.mass * 10)
-    simulate_rigid_body(object)
 
-    # object.velocity_y -= object.velocity_y * friction
-    # a = (friction * object.mass * 10)  / object.mass \
+    if object.force_x > 0:
+        # object.force_x -= (10 * friction * object.mass)
+        object.force_x -= (friction * object.force_x )
+        simulate_rigid_body(object)
+
+    elif object.force_x < 0:
+        object.force_x += (friction * -object.force_x)
+        simulate_rigid_body(object)
+
+    print(object.velocity_x, object.force_x)
 
 
 def simulate_rigid_body_by_player(object):
     
-    object.acceleration_x = object.force_x / object.mass
-    object.acceleration_y = object.force_y / object.mass
+    object.acceleration_x += object.force_x / object.mass
+    object.acceleration_y += object.force_y / object.mass
+    object.velocity_x += object.acceleration_x
+    object.velocity_y += object.acceleration_y
+    object.x += object.velocity_x
+    object.y += object.velocity_y
+
+
+def simulate_rigid_body(object):
+
+    object.acceleration_x += object.force_x / object.mass
+    object.acceleration_y += object.force_y / object.mass
     object.velocity_x += object.acceleration_x
     object.velocity_y += object.acceleration_y
     object.x += object.velocity_x
@@ -113,27 +116,33 @@ def simulate_rigid_body_by_player(object):
     # object.force_y = 0
 
 
-def simulate_rigid_body(object):
+def simulate_rigid_body_x(object):
 
-    object.acceleration_x = object.force_x / object.mass
-    object.acceleration_y = object.force_y / object.mass
+    object.acceleration_x += object.force_x / object.mass
+    # object.acceleration_y += object.force_y / object.mass
     object.velocity_x += object.acceleration_x
-    object.velocity_y += object.acceleration_y
+    # object.velocity_y += object.acceleration_y
     object.x += object.velocity_x
-    object.y += object.velocity_y
-    object.force_x = 0
-    object.force_y = 0
+    # object.y += object.velocity_y
+
+def simulate_rigid_body_y(object):
+    
+        # object.acceleration_x += object.force_x / object.mass
+        object.acceleration_y += object.force_y / object.mass
+        # object.velocity_x += object.acceleration_x
+        object.velocity_y += object.acceleration_y
+        # object.x += object.velocity_x
+        object.y += object.velocity_y
 
 
 def simulate_rigid_body_for_screen(object):
-    # object.acceleration_x = object.force_x / object.mass
-    # object.acceleration_y = object.force_y / object.mass
+
     object.velocity_x += object.acceleration_x
     object.velocity_y += object.acceleration_y
     object.x += object.velocity_x
     object.y += object.velocity_y
-    object.force_x = 0
-    object.force_y = 0
+    # object.force_x = 0
+    # object.force_y = 0
 
 def create_object(ObjectType,id, x=0, y=0, radius_x=0, radius_y=0, color="RED"):
     print(id)
@@ -145,7 +154,7 @@ def create_object(ObjectType,id, x=0, y=0, radius_x=0, radius_y=0, color="RED"):
         radius_x = random.randint(10, 50)
         radius_y = random.randint(10, 50)
         Object = Ellipse(x, y,  radius_x, radius_y, id, density= COLORS[color]["density"], color= COLORS[color]["rgb"])
-        
+    
     elif ObjectType == "R":
         # This is the Rectangle case
         color = random.choice(list(COLORS))
@@ -167,25 +176,6 @@ COLORS = {
     "BLUE": {"rgb": (0, 255, 0),  "density": 0.02},
     "GREEN": {"rgb": (0, 0, 255),  "density": 0.03},
 }
-# import numpy as np
-
-# def draw_shadow(screen, obj):
-#     if isinstance(obj, Rectangle):
-#         dx, dy = obj.x - LIGHT_SOURCE[0], obj.y - LIGHT_SOURCE[1]
-#         shadow_polygon = [
-#             (obj.x, obj.y + obj.height),
-#             (obj.x + obj.width, obj.y + obj.height),
-#             (obj.x + obj.width + dx, obj.y + dy),
-#             (obj.x + dx, obj.y + dy),
-#         ]
-#     elif isinstance(obj, Ellipse):
-#         theta = np.linspace(0, 2*np.pi, 100)
-#         dx, dy = obj.x - LIGHT_SOURCE[0], obj.y - LIGHT_SOURCE[1]
-#         shadow_polygon = [(obj.x + obj.width*np.cos(t) + dx, obj.y + obj.height*np.sin(t) + dy) for t in theta]
-
-#     return shadow_polygon
-# # In your main loop, draw the shadows before drawing the objects:
-# LIGHT_SOURCE = (400, 300)
 
 
 def globalCoordinates(objects):

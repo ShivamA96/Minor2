@@ -1,12 +1,14 @@
 import pygame
-from physicsEngine import Rectangle,Ellipse, simulate_rigid_body,apply_acceleration, apply_friction, apply_force, force_by_player, create_object,handle_collision
-from physicsEngine import COLORS as COLORS
-import random
+from physicsEngineV2 import Rectangle,Ellipse,simulate_rigid_body_for_screen, simulate_rigid_body,apply_acceleration, apply_friction, apply_force, force_by_player, create_object,handle_collision
+from physicsEngineV2 import COLORS as COLORS
+
 WIDTH, HEIGHT = 800, 600
 GRAVITY = 0.98
-COR = 0.9
+COR = 0.5
+FPS = 100
 
 pygame.init()
+import turtle
 # Create a Pygame window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
@@ -15,42 +17,14 @@ platform = Rectangle(0, HEIGHT - 10, WIDTH, 10)
 walls = [Rectangle(0, 0, 10, HEIGHT), Rectangle(WIDTH - 10, 0, 10, HEIGHT)]
 
 
-
-
 clock=pygame.time.Clock()
-FPS = 100
 
 # Main game loop
 running = True
 dragging = False
 
-
-
-
-# def create_object(ObjectType = "R", x=0, y=0, radius_x=0, radius_y=0, color="RED"):
-
-#     if ObjectType == "E":
-#         # This is the Ellipse case
-#         color = random.choice(list(COLORS))
-#         x = random.randint(0, WIDTH - radius_x)
-#         y = random.randint(0, HEIGHT - radius_y)
-#         radius_x = random.randint(10, 50)
-#         radius_y = random.randint(10, 50)
-#         Object = Ellipse(x, y, radius_x, radius_y, density= COLORS[color]["density"], color= COLORS[color]["rgb"])
-        
-#     elif ObjectType == "R":
-#         # This is the Rectangle case
-#         color = random.choice(list(COLORS))
-#         radius_x = random.randint(10, 50)
-#         radius_y = random.randint(10, 50)
-#         x = random.randint(0, WIDTH - radius_x)
-#         y = random.randint(0, HEIGHT - radius_y)
-#         Object = Rectangle(x, y, radius_x, radius_y, density= COLORS[color]["density"], color= COLORS[color]["rgb"])
-
-#     return Object
-
-
 font = pygame.font.Font(None, 24)
+
 def pygameStart():
     selected_obj = None  # No object is selected initially
 
@@ -68,6 +42,9 @@ def pygameStart():
         pygame.draw.rect(screen, (0, 255, 0), (platform.x, platform.y, platform.width, platform.height))
         pygame.draw.rect(screen, (0, 255, 0), (walls[0].x, walls[0].y, walls[0].width, walls[0].height))
         pygame.draw.rect(screen, (0, 255, 0), (walls[1].x, walls[1].y, walls[1].width, walls[1].height))
+
+        # make an inclined plane
+        pygame.draw.polygon(screen, (0, 255, 0), [(0, HEIGHT - 10), (WIDTH, HEIGHT - 10), (WIDTH, HEIGHT), (0, HEIGHT)])
 
         # print(objects[0].__class__.__name__)
         for i in objects:
@@ -88,7 +65,7 @@ def pygameStart():
 
         # for obj in objects:
 
-        handle_collision(objects)
+        # handle_collision(objects)
 
             
         
@@ -100,24 +77,20 @@ def pygameStart():
             # APPLY GRAVITY
             apply_acceleration(obj, 0, GRAVITY)
 
-            # simulate_rigid_body(obj)
 
-            # FAKE FRICTION
+            # FRICTION
 
-            if obj.y + obj.height > platform.y:
-                
-                # print(obj.velocity_y, obj.mass)
-                # obj.acceleration_x -= obj.velocity_x * 0.1
-                # # print(obj.acceleration_x, obj.acceleration_y)
-                # simulate_rigid_body(obj)
-                print(obj.velocity_x)
-                
-                apply_friction(obj, 0.5)
+            if obj.y + obj.height > platform.y and obj.velocity_y > 0:
+
+                # apply_acceleration(obj, -obj.velocity_x * 0.1, 0)
+                apply_friction(obj, 1)
+
             # BOUNCE
             if obj.y + obj.height > platform.y:
                 obj.y = platform.y - obj.height 
                 obj.velocity_y *= -COR
-
+                # obj.force_y = -obj.force_y
+                # simulate_rigid_body_for_screen(obj)
  
 
             # WALLS COLLISION
@@ -187,18 +160,6 @@ def pygameStart():
             selected_obj.s_counter = 0
 
 
-        # force_surface = font.render(f"Force: ({float(i.force_x)}, {float(i.force_y)})", True, (0, 0, 0))
-        
-        for i in objects:
-            if i.__class__.__name__ == "Rectangle":
-                # pygame.draw.rect(screen, i.color, (i.x, i.y, i.width, i.height))
-                force_surface = font.render(f"Force: ({float(i.force_x)}, {float(i.force_y)})", True, (0, 0, 0))
-                screen.blit(force_surface, (i.x, i.y))
-            elif i.__class__.__name__ == "Ellipse":
-                # rect = pygame.Rect(i.x, i.y, i.width, i.height)
-                # pygame.draw.ellipse(screen, i.color, rect)
-                force_surface = font.render(f"Force: ({float(i.force_x)}, {float(i.force_y)})", True, (0,0,0))
-                screen.blit(force_surface, (i.x, i.y))
 
         # Update the display
         pygame.display.flip()
