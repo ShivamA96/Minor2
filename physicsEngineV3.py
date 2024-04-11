@@ -1,5 +1,30 @@
 import math
+
+
 class PyEn:
+    """
+    PyEn class represents a physics engine object.
+
+    Attributes:
+        type (str): The type of the object.
+        x (float): The x-coordinate of the object.
+        y (float): The y-coordinate of the object.
+        width (float): The width of the object.
+        height (float): The height of the object.
+        density (float, optional): The density of the object. Default is 1.
+        id (int, optional): The ID of the object. Default is 0.
+        velocity_x (float, optional): The velocity in the x-direction. Default is 0.
+        velocity_y (float, optional): The velocity in the y-direction. Default is 0.
+        force_x (float, optional): The force in the x-direction. Default is 0.0.
+        force_y (float, optional): The force in the y-direction. Default is 0.0.
+        color (tuple, optional): The color of the object in RGB format. Default is (0, 0, 0).
+        acceleration_x (float, optional): The acceleration in the x-direction. Default is 0.
+        acceleration_y (float, optional): The acceleration in the y-direction. Default is 0.
+        w_counter (float): A counter for the 'w' key.
+        a_counter (float): A counter for the 'a' key.
+        s_counter (float): A counter for the 's' key.
+        d_counter (float): A counter for the 'd' key.
+    """
     def __init__(self,type,x, y, width, height,  density=1,id =0, velocity_x=0, velocity_y=0, force_x=0.0, force_y=0.0, color=(0, 0, 0), acceleration_x=0, acceleration_y=0):
         self.type = type
         self.id = id

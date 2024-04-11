@@ -10,11 +10,12 @@ screen = pygame.display.set_mode([WIDTH, HEIGHT])
 fps = 60
 timer = pygame.time.Clock()
 
-# game variables
+# Game variables
 wall_thickness = 10
 gravity = 0.5
 bounce_stop = 0.3
-# track positions of mouse to get movement vector
+
+# Track positions of mouse to get movement vector
 mouse_trajectory = []
 
 
@@ -40,7 +41,7 @@ class Ball:
         if not self.selected:
             if self.y_pos < HEIGHT - self.radius - (wall_thickness / 2):
                 self.y_speed += gravity
-            else:
+            else:   
                 if self.y_speed > bounce_stop:
                     self.y_speed = self.y_speed * -1 * self.retention
                 else:
@@ -124,13 +125,17 @@ def handle_collision(ball1, ball2):
     ball2.y_speed -= impulse * ball1.mass * normal_y
 
 
+# Font initialization
+font = pygame.font.SysFont(None, 22)
+
+# Ball initialization
 ball1 = Ball(50, 50, 30, 'blue', 100, .75, 0, 0, 1, 0.02)
-ball2 = Ball(500, 50, 30, 'green', 300, .9, 0, 0, 2, 0.03)
-ball3 = Ball(200, 50, 30, 'purple', 200, .8, 0, 0, 3, 0.04)
-ball4 = Ball(700, 50, 30, 'red', 500, .7, 0, 0, 4, .1)
+ball2 = Ball(500, 50, 70, 'green', 300, .9, 0, 0, 2, 0.03)
+ball3 = Ball(200, 50, 50, 'purple', 200, .8, 0, 0, 3, 0.04)
+ball4 = Ball(700, 50, 60, 'red', 500, .7, 0, 0, 4, .1)
 balls = [ball1, ball2, ball3, ball4]
 
-# main game loop
+# Main game loop
 run = True
 while run:
     timer.tick(fps)
@@ -154,6 +159,11 @@ while run:
     ball2.y_speed = ball2.check_gravity()
     ball3.y_speed = ball3.check_gravity()
     ball4.y_speed = ball4.check_gravity()
+
+    # Displaying object attributes
+    for ball in balls:
+        text = font.render(f'x_speed: {ball.x_speed:.2f}, y_speed: {ball.y_speed:.2f}', True, (255, 255, 255))
+        screen.blit(text, (ball.x_pos , ball.y_pos ))
 
     for i in range(len(balls)):
         for j in range(i + 1, len(balls)):
