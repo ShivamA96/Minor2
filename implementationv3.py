@@ -3,7 +3,7 @@ from physicsEngineV3 import PyEn
 WIDTH, HEIGHT = 1920, 600
 GRAVITY = 9.8
 COR = 0.5
-FPS = 1000
+FPS = 10000
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
@@ -48,6 +48,9 @@ def pygameStart():
     running = True
 
     while running:
+        pygame.init()
+        font = pygame.font.SysFont(None, 24)
+
         screen.fill((255, 255, 255))
         
         # Draw the platform
@@ -58,9 +61,13 @@ def pygameStart():
         for i in objects:
             if i.type == "R":
                 pygame.draw.rect(screen, i.color, (i.x, i.y, i.width, i.height))
+                force_surface = font.render(f"Force: ({float(i.velocity_x):.2f}, {float(i.velocity_y):.2f})", True, (0, 0, 0))
+                screen.blit(force_surface, (i.x, i.y))
             elif i.type == "E":
                 rect = pygame.Rect(i.x, i.y, i.width, i.height)
                 pygame.draw.ellipse(screen, i.color, rect)
+                force_surface = font.render(f"Force: ({float(i.velocity_x):.2f}, {float(i.velocity_y):.2f})", True, (0, 0, 0))
+                screen.blit(force_surface, (i.x, i.y))
         
         
         
@@ -82,13 +89,14 @@ def pygameStart():
         if keys[pygame.K_UP] and selected_obj:
             selected_obj.projectile_motion(2,45.0)
         if keys[pygame.K_w] and selected_obj:
-            selected_obj.w_counter = 0.5
+            selected_obj.w_counter = 5
+            print(selected_obj.w_counter)
             selected_obj.force_by_player_y(-selected_obj.w_counter)
         elif keys[pygame.K_a] and selected_obj:
             selected_obj.a_counter = 5            
             selected_obj.force_by_player_x(-selected_obj.a_counter)
         elif keys[pygame.K_s] and selected_obj:
-            selected_obj.s_counter = 0.5
+            selected_obj.s_counter = 5
             selected_obj.force_by_player_y(selected_obj.s_counter)
         elif keys[pygame.K_d] and selected_obj:
             selected_obj.d_counter = 5
@@ -96,10 +104,12 @@ def pygameStart():
 
 
         for obj in objects:
-            obj.apply_acceleration_y(GRAVITY)
 
-            if obj.y + obj.height > platform.y and obj.velocity_y > 0:
-                obj.apply_friction(1)
+            if obj != selected_obj:
+                obj.apply_acceleration_y(GRAVITY)
+
+            if obj.y + obj.height > platform.y and obj.velocity_y > 0 and obj != selected_obj:
+                obj.apply_friction(0.1)
 
             if obj.y + obj.height > platform.y:
                 obj.y = platform.y - obj.height 
@@ -111,9 +121,11 @@ def pygameStart():
                     obj.x = walls[0].x + walls[0].width
                 elif(obj.x < walls[1].x + walls[1].width and obj.x + obj.width > walls[1].x and obj.y < walls[1].y + walls[1].height and obj.y + obj.height > walls[1].y):
                     obj.x = walls[1].x - obj.width
+                    
                 obj.velocity_x = -obj.velocity_x
-                
-                break
+
+                # obj.force_x = -obj.force_x
+
             obj.simulate_rigid_body_x()
             obj.simulate_rigid_body_y()
         

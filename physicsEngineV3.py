@@ -148,7 +148,7 @@ class PyEn:
         
     def force_by_player_y(self,  force_y):
         
-        self.force_y += force_y
+        self.force_y = force_y
         # self.acceleration_y += self.force_y / self.mass
 
         # self.simulate_rigid_body_by_player_y()
@@ -209,22 +209,22 @@ class PyEn:
     def apply_friction(self,  friction):
             
             if self.force_x < (friction * self.mass) and self.force_x > -((friction * self.mass)):
+                # print(self.velocity_x, "1st condition")
                 self.velocity_x = 0
-                print(self.velocity_x, "0")
                 self.simulate_rigid_body_by_player_x()
                 # self.simulate_rigid_body_x()
             
 
                 # self.force_x -= (10 * friction * self.mass)
-            if self.force_x > 0 :
+            elif self.force_x > (friction * self.mass) :
                 self.force_x -= (friction * self.mass)
-                print(self.force_x, "1")
+                # print(self.force_x, "1")
                 
                 # self.simulate_rigid_body_x()
     
-            elif self.force_x < 0:
+            elif self.force_x < -(friction * self.mass):
                 self.force_x += (friction * self.mass)
-                print(self.force_x, "2")
+                # print(self.force_x, "2")
                 # self.simulate_rigid_body_x()
 
 
